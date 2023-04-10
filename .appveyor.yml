@@ -13,5 +13,4 @@ install:
 
 build_script:
   - chmod +x gradlew
-  - chmod +x driver/linux/chromedriver
   - ./gradlew test --info
