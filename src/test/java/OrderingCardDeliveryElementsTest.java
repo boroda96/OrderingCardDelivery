@@ -20,15 +20,15 @@ class OrderingCardDeliveryElementsTest {
         $("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
     }
 
-    public String generateDate(long addDays, String pattern) {
-        return LocalDate.now().plusDays(addDays).format(DateTimeFormatter.ofPattern(pattern));
+    public String generateDate(int addDays, int addMonth, int addYears, String pattern) {
+        return LocalDate.now().plusDays(addDays).plusMonths(addMonth).plusYears(addYears).format(DateTimeFormatter.ofPattern(pattern));
     }
 
     @Test
     void shouldTestPositiveCityEk() {
         $("[data-test-id=city] input").setValue("Ек");
         $(byText("Екатеринбург")).click();
-        String planningDate = generateDate(4, "dd.MM.yyyy");
+        String planningDate = generateDate(4, 0, 0, "dd.MM.yyyy");
         $("[data-test-id=date] input").setValue(planningDate);
         $("[data-test-id=name] input").setValue("Иванов Петр");
         $("[data-test-id=phone] input").setValue("+70000000000");
@@ -43,40 +43,42 @@ class OrderingCardDeliveryElementsTest {
     void shouldTestPositiveData7() {
         $("[data-test-id=city] input").setValue("Ек");
         $(byText("Екатеринбург")).click();
+        String planningDate = generateDate(7, 0, 0, "dd.MM.yyyy");
         $(".icon_name_calendar").click();
-        //$x("/html/body/div[2]/div/div/div/div/div/div/div[4]").click();
-        //$(byText("Май 2023")).shouldBe(Condition.visible);
         $x("/html/body/div[2]/div/div/div/div/div/table/tbody/tr[5]/td[3]").click();
+        $("[data-test-id=name] input").setValue("Иванов Петр");
+        $("[data-test-id=phone] input").setValue("+70000000000");
+        $("[data-test-id=agreement]").click();
+        $(byText("Забронировать")).click();
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+    }
+
+    @Test
+    void shouldTestPositiveDataNextMonth() {
+        $("[data-test-id=city] input").setValue("Ек");
+        $(byText("Екатеринбург")).click();
+        String planningDate = generateDate(7, 1, 0, "dd.MM.yyyy");
+        $(".icon_name_calendar").click();
+        $x("/html/body/div[2]/div/div/div/div/div/div/div[4]").click();
+        $(byText("Май 2023")).shouldBe(Condition.visible);
+        $x("/html/body/div[2]/div/div/div/div/div/table/tbody/tr[4]/td[5]").click();
         //$(byText("19")).click();
         $("[data-test-id=name] input").setValue("Иванов Петр");
         $("[data-test-id=phone] input").setValue("+70000000000");
         $("[data-test-id=agreement]").click();
         $(byText("Забронировать")).click();
         $(".notification__content")
-                .shouldHave(Condition.text("Встреча успешно забронирована на " + "19.04.2023"), Duration.ofSeconds(15))
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
     }
-    @Test
-    void shouldTestPositiveDataNextMonth() {
-        $("[data-test-id=city] input").setValue("Ек");
-        $(byText("Екатеринбург")).click();
-        $(".icon_name_calendar").click();
-        $x("/html/body/div[2]/div/div/div/div/div/div/div[4]").click();
-        $(byText("Май 2023")).shouldBe(Condition.visible);
-        //$x("/html/body/div[2]/div/div/div/div/div/table/tbody/tr[5]/td[3]").click();
-        $(byText("19")).click();
-        $("[data-test-id=name] input").setValue("Иванов Петр");
-        $("[data-test-id=phone] input").setValue("+70000000000");
-        $("[data-test-id=agreement]").click();
-        $(byText("Забронировать")).click();
-        $(".notification__content")
-                .shouldHave(Condition.text("Встреча успешно забронирована на " + "19.05.2023"), Duration.ofSeconds(15))
-                .shouldBe(Condition.visible);
-    }
+
     @Test
     void shouldTestPositiveDataNextYears() {
         $("[data-test-id=city] input").setValue("Ек");
         $(byText("Екатеринбург")).click();
+        String planningDate = generateDate(8, 1, 1, "dd.MM.yyyy");
         $(".icon_name_calendar").click();
         $x("/html/body/div[2]/div/div/div/div/div/div/div[3]").click();
         $x("/html/body/div[2]/div/div/div/div/div/div/div[4]").click();
@@ -87,7 +89,7 @@ class OrderingCardDeliveryElementsTest {
         $("[data-test-id=agreement]").click();
         $(byText("Забронировать")).click();
         $(".notification__content")
-                .shouldHave(Condition.text("Встреча успешно забронирована на " + "20.05.2024"), Duration.ofSeconds(15))
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
     }
 }
