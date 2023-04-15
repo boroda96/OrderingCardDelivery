@@ -25,7 +25,8 @@ class OrderingCardDeliveryElementsTest {
     public String generateDate(int addDays, String pattern) {
         return LocalDate.now().plusDays(addDays).format(DateTimeFormatter.ofPattern(pattern));
     }
-   @Test
+
+    @Test
     void shouldTestPositiveCityEk() {
         $("[data-test-id=city] input").setValue("Ек");
         $(byText("Екатеринбург")).click();
@@ -44,9 +45,9 @@ class OrderingCardDeliveryElementsTest {
     void shouldTestPositiveData7() {
         $("[data-test-id=city] input").setValue("Ек");
         $(byText("Екатеринбург")).click();
-       String planningDate = generateDate(7, "dd.MM.yyyy");
+        String planningDate = generateDate(7, "dd.MM.yyyy");
         $("[data-test-id=date] input").click();
-        if(!generateDate(3,  "MM").equals(generateDate(7,"MM"))) {
+        if (!generateDate(3, "MM").equals(generateDate(7, "MM"))) {
             $("div[class='calendar__arrow calendar__arrow_direction_right']").click();
         }
         $$("[data-day]").find(Condition.text(generateDate(7, "dd"))).click();
@@ -58,16 +59,17 @@ class OrderingCardDeliveryElementsTest {
                 .shouldHave(text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
     }
+
     @Test
     void shouldTestPositiveData20Day() {
         $("[data-test-id=city] input").setValue("Ек");
         $(byText("Екатеринбург")).click();
         String planningDate = generateDate(20, "dd.MM.yyyy");
         $("[data-test-id=date] input").click();
-        if(!generateDate(3,  "MM").equals(generateDate(20,"MM"))) {
+        if (!generateDate(3, "MM").equals(generateDate(20, "MM"))) {
             $("div[class='calendar__arrow calendar__arrow_direction_right']").click();
         }
-        $$("[data-day]").find(Condition.text(generateDate(20, "dd"))).click();
+        $$("[data-day]").find(Condition.text(generateDate(20, "d"))).click();
         $("[data-test-id=name] input").setValue("Иванов Петр");
         $("[data-test-id=phone] input").setValue("+70000000000");
         $("[data-test-id=agreement]").click();
@@ -77,4 +79,22 @@ class OrderingCardDeliveryElementsTest {
                 .shouldBe(Condition.visible);
     }
 
+    @Test
+    void shouldTestPositiveData366Day() {
+        $("[data-test-id=city] input").setValue("Ек");
+        $(byText("Екатеринбург")).click();
+        String planningDate = generateDate(366, "dd.MM.yyyy");
+        $("[data-test-id=date] input").click();
+        if (!generateDate(3, "MM").equals(generateDate(366, "yyyy"))) {
+            $("div[class*='calendar__arrow_direction_right calendar__arrow_double']").click();
+        }
+        $$("[data-day]").find(Condition.text(generateDate(366, "d"))).click();
+        $("[data-test-id=name] input").setValue("Иванов Петр");
+        $("[data-test-id=phone] input").setValue("+70000000000");
+        $("[data-test-id=agreement]").click();
+        $(byText("Забронировать")).click();
+        $(".notification__content")
+                .shouldHave(text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+    }
 }
